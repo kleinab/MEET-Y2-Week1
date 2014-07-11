@@ -1,5 +1,5 @@
 """
-Django settings for pollingapp project.
+Django settings for pollingsite project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -49,9 +49,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'pollingapp.urls'
+ROOT_URLCONF = 'pollingsite.urls'
 
-WSGI_APPLICATION = 'pollingapp.wsgi.application'
+WSGI_APPLICATION = 'pollingsite.wsgi.application'
 
 
 # Database
