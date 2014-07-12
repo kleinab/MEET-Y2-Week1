@@ -2,6 +2,10 @@ from django.db import models
 import datetime
 from django.utils import timezone
 
+class Member(models.Model):
+    username = models.CharField(max_length=200)
+    password = models.CharField(max_length=200)
+
 class Poll(models.Model):
     question = models.CharField(max_length=200)
     author = models.ForeignKey(Member)
@@ -22,7 +26,3 @@ class Choice(models.Model):
 
     def __unicode__(self):
         return self.choice_text
-
-class Member(models.Model):
-    username = models.CharField(max_length=200)
-    password = models.CharField(max_length=200)
