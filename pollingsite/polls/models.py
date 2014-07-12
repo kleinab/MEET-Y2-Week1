@@ -4,7 +4,7 @@ from django.utils import timezone
 
 class Poll(models.Model):
     question = models.CharField(max_length=200)
-    author = models.CharField(max_length=200)
+    author = models.ForeignKey(Member)
     pub_date = models.DateTimeField('date published')
 
     def __unicode__(self):
@@ -22,3 +22,7 @@ class Choice(models.Model):
 
     def __unicode__(self):
         return self.choice_text
+
+class Member(models.Model):
+    username = models.CharField(max_length=200)
+    password = models.CharField(max_length=200)
