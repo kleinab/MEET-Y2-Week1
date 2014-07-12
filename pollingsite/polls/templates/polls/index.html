@@ -2,6 +2,8 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
 
+<h1>Polls</h1>
+
 {% if latest_poll_list %}
     <ul>
     {% for poll in latest_poll_list %}
@@ -11,3 +13,5 @@
 {% else %}
     <p>No polls are available.</p>
 {% endif %}
+
+<a href="{% url 'polls:add' %}">Add a new poll</a>

@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from polls.models import Choice, Poll
+from django.utils import timezone
 
 def index(request):
     latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
@@ -28,4 +29,21 @@ def vote(request, poll_id):
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
-        return HttpResponseRedirect(reverse('polls:index'))
+        return HttpResponseRedirect(reverse('polls:results', args=poll_id))
+
+def results(request, poll_id):
+    poll = get_object_or_404(Poll, pk=poll_id)
+    return render(request, 'polls/results.html', {'poll': poll})
+
+def add(request):
+    return render(request, 'polls/add.html')
+
+def save(request):
+    p = Poll(question=request.POST['question'], author=request.POST['author'], pub_date=timezone.now())
+    p.save()
+    p.choice_set.create(choice_text=request.POST['choice1'], votes=0)
+    p.choice_set.create(choice_text=request.POST['choice2'], votes=0)
+    p.choice_set.create(choice_text=request.POST['choice3'], votes=0)
+    p.save()
+    return HttpResponseRedirect(reverse('polls:index'))
+
