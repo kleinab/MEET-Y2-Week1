@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from polls.models import Choice, Poll
+from polls.models import Choice, Poll, Member
 from django.utils import timezone
 
 def index(request):
@@ -39,7 +39,11 @@ def add(request):
     return render(request, 'polls/add.html')
 
 def save(request):
-    p = Poll(question=request.POST['question'], author=request.POST['author'], pub_date=timezone.now())
+    if 'member_id' not in request.session:
+        return login(request)
+    member_id = request.session['member_id']
+    author = Member.objects.get(id=member_id)
+    p = Poll(question=request.POST['question'], author=author, pub_date=timezone.now())
     p.save()
     p.choice_set.create(choice_text=request.POST['choice1'], votes=0)
     p.choice_set.create(choice_text=request.POST['choice2'], votes=0)
@@ -47,3 +51,46 @@ def save(request):
     p.save()
     return HttpResponseRedirect(reverse('polls:index'))
 
+def login(request):
+    error_message = ""
+    context = {'error_message' : error_message}
+    return render(request, 'polls/login.html', context)
+
+def login_post(request):
+    m = Member.objects.filter(username=request.POST['username'])
+    if len(m) == 0:
+        error_message = "Username does not exist!"
+        context = {'error_message': error_message}
+        return render(request, 'polls/login.html', context)
+    member = m[0]
+    if member.password != request.POST['password']:
+        error_message = "Invalid password!"
+        context = {'error_message': error_message}
+        return render(request, 'polls/login.html', context)
+    else:
+        request.session['member_id'] = member.id
+        return index(request)
+
+def signup(request):
+    error_message = ""
+    context = {'error_message': error_message}
+    return render(request, 'polls/signup.html', context)
+
+def signup_post(request):
+    username = request.POST['username']
+    password0 = request.POST['password0']
+    password1 = request.POST['password1']
+    if (password0 == password1):
+        member = Member(username=username, password=password0)
+        member.save()
+        request.session['member_id'] = member.id
+        return index(request)
+    else:
+        error_message = "Mismatch Passwords!"
+        context = {'error_message': error_message}
+        return render(request, 'polls/signup.html', context)
+
+def logout(request):
+    if 'member_id' in request.session:
+        del request.session['member_id']
+    return login(request)

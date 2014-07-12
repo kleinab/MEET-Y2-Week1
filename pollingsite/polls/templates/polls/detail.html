@@ -1,5 +1,7 @@
 <h1>{{ poll.question }} - {{ poll.pub_date|date:"SHORT_DATE_FORMAT" }}</h1>
 
+<h3>by {{ poll.author.username }}</h3>
+
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <form action="{% url 'polls:vote' poll.id %}" method="post">
