@@ -15,7 +15,7 @@ def vote(request, poll_id):
     if 'choice' not in request.POST: # User didn't make a choice
         return detail(request, poll_id)
     else:
-        selected_choice = p.choice_set.get(pk=request.POST['choice'])
+        selected_choice = poll.choice_set.get(id=request.POST['choice'])
         selected_choice.votes += 1
         selected_choice.save()
         return index(request)
